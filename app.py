@@ -35,3 +35,35 @@ if status == 'Active':
         })
     # Display the data in a table
     st.table(data)
+
+if status == 'In-Operation':
+    cursor.execute(operation_query)
+    submissions = cursor.fetchall()
+    # Create a list of dictionaries for the data
+    data = []
+    for submission in submissions:
+        data.append({
+            "Address": submission[0],
+            "Fire Intensity": submission[1],
+            "Population Density": submission[2],
+            "Sensitive Areas": submission[3],
+            "Status": submission[4]
+        })
+    # Display the data in a table
+    st.table(data)
+
+if status == 'Controlled':
+    cursor.execute(control_query)
+    submissions = cursor.fetchall()
+    # Create a list of dictionaries for the data
+    data = []
+    for submission in submissions:
+        data.append({
+            "Address": submission[0],
+            "Fire Intensity": submission[1],
+            "Population Density": submission[2],
+            "Sensitive Areas": submission[3],
+            "Status": submission[4]
+        })
+    # Display the data in a table
+    st.table(data)
