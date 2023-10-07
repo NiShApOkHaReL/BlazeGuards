@@ -3,9 +3,11 @@ import pandas as pd
 import schedule
 import time
 import threading
+from datetime import date
 
+today = date.today()
 # Define API URL for Nasa Active Fire Data
-nasa_url ="https://firms.modaps.eosdis.nasa.gov/api/area/csv/9799bfce0729259d1fd5f60d816aa38c/MODIS_NRT/world/1/2023-10-07"
+nasa_url =f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/9799bfce0729259d1fd5f60d816aa38c/MODIS_NRT/world/1/{today}"
 
 # function to fetch and process Nasa Active fire Data
 def get_active_fire_data(api_url):
