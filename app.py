@@ -7,6 +7,8 @@ from data_fetch import active_fire_data
 import folium
 from streamlit.components.v1 import html
 
+st.set_page_config(layout="centered")
+
 
 from config import connect_to_database, get_current_location,  choose_on_map
 conn, cursor = connect_to_database()
@@ -24,15 +26,16 @@ def get_location_name(lat, lon):
     else:
         return "Location information not available"
 
-st.set_page_config(layout="centered")
 with st.sidebar:
     st.title("Report a Fire 🔥")
+    st.divider()
     st.header("Enter the location")
     location_method = st.radio("Choose location method", ["Take current location",  "Choose on map"])
     if location_method == "Take current location":
         lat, lon, address= get_current_location()
     
     if location_method == "Choose on map":
+        st.divider()
         lat, lon = choose_on_map()
         
     
@@ -70,14 +73,8 @@ with st.sidebar:
                 st.warning("Please fill out all fields.")
 
 
-        
-            
-        
-
-
 st.title("BlazeGuards: Fire Management Solutions")
 
-df = active_fire_data 
 # Define a function to assign colors based on brightness
 def assign_color(brightness):
     if brightness > 365:
@@ -96,7 +93,7 @@ m = folium.Map(location=[0, 0], zoom_start=2)
 
 
 # Iterate through your dataset and add markers to the map
-for index, row in df.iterrows():
+for index, row in active_fire_data.iterrows():
     lat, lon, brightness = row['latitude'], row['longitude'], row['brightness']
     color = assign_color(brightness)
     folium.Circle(
@@ -198,6 +195,9 @@ with tab1:
 
 
 with tab2:
+    # Convert 'brightness' column to numeric type (int or float)
+    active_fire_data['brightness'] = active_fire_data['brightness'].astype(float)
+
     # Show "Fatal Zones" (locations with highest brightness) on the right side
     top_fatal_zones = active_fire_data.nlargest(10, 'brightness')
     top_fatal_zones['Location'] = top_fatal_zones.apply(lambda row: get_location_name(row['latitude'], row['longitude']), axis=1)

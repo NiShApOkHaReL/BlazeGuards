@@ -20,12 +20,12 @@ def get_active_fire_data(api_url):
 def request_nasa_api():
     global active_fire_data
     active_fire_data = get_active_fire_data(nasa_url)
-    active_fire_data = active_fire_data[active_fire_data['confidence'] > 65] # Filter by Confidence > 65
+    active_fire_data = active_fire_data[active_fire_data['confidence'] > 60] # Filter by Confidence > 65
     # print (active_fire_data)
 
 # Initialise active_fire_Data
 active_fire_data = get_active_fire_data(nasa_url)
-active_fire_data = active_fire_data[active_fire_data['confidence'] > 65] # Filter by Confidence > 65
+active_fire_data = active_fire_data[active_fire_data['confidence'] > 60] # Filter by Confidence > 65
 print (active_fire_data)
 
 #Schedule Nasa Api request every  30 minutes
