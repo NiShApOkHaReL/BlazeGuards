@@ -11,7 +11,7 @@ def connect_to_database():
         host = "localhost",
         database = "blazeguards",
         user = "root",
-        password = "Abhinash143"
+        password = ""
     )
     cursor = conn.cursor()
     return conn, cursor
