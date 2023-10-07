@@ -6,7 +6,7 @@ import plotly.express as px
 from data_fetch import active_fire_data 
 
 
-from config import connect_to_database, get_current_location, manually_select_location, choose_on_map
+from config import connect_to_database, get_current_location,  choose_on_map
 conn, cursor = connect_to_database()
 
 # Function to get location name from latitude and longitude
