@@ -1,9 +1,10 @@
 import streamlit as st
 import mysql.connector
 import requests
-from tensorflow.keras.models import load_model
+# from tensorflow.keras.models import load_model
 import numpy as np
-import cv2
+# import cv2
+
 
 def connect_to_database():
     conn = mysql.connector.connect(
@@ -72,6 +73,7 @@ def choose_on_map():
     </html>
     """
 
+    
     st.components.v1.html(iframe_html, width=800, height=600)
 
     # Display text input fields for latitude and longitude
@@ -192,67 +194,67 @@ def set_region():
             conn.commit()
 
 
-#Fire Detection model
-def fire_detection():
-    # Load the trained model
-    cnn = load_model('models/fire-smoke-normal.h5')
+# #Fire Detection model
+# def fire_detection():
+#     # Load the trained model
+#     cnn = load_model('models/fire-smoke-normal.h5')
 
-    # Define the categories
-    Categories = ['Fire', 'Normal', 'Smoke']
+#     # Define the categories
+#     Categories = ['Fire', 'Normal', 'Smoke']
 
-    # Initialize VideoCapture object for live feed
-    cap = cv2.VideoCapture(1)
+#     # Initialize VideoCapture object for live feed
+#     cap = cv2.VideoCapture(1)
 
-    # Streamlit loop
-    button_counter = 0
+#     # Streamlit loop
+#     button_counter = 0
 
-    # Flag to control warnings
-    send_warnings = st.checkbox("Start Warnings", value=True)
+#     # Flag to control warnings
+#     send_warnings = st.checkbox("Start Warnings", value=True)
 
-    # Create a container to hold the video feed and controls
-    video_container = st.container()
+#     # Create a container to hold the video feed and controls
+#     video_container = st.container()
 
-    # Streamlit loop
-    with video_container:
-        st.header("Live Video Feed")
-        video_placeholder = st.empty()
-        stop_placeholder = st.empty()
-        while True:
-            # Read a frame from the video feed
-            ret, frame = cap.read()
+#     # Streamlit loop
+#     with video_container:
+#         st.header("Live Video Feed")
+#         video_placeholder = st.empty()
+#         stop_placeholder = st.empty()
+#         while True:
+#             # Read a frame from the video feed
+#             ret, frame = cap.read()
 
-            # Convert the frame to RGB and resize
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            frame_resized = cv2.resize(frame_rgb, (224, 224))
-            frame_resized = frame_resized / 255.0
-            frame_resized = np.expand_dims(frame_resized, axis=0)
+#             # Convert the frame to RGB and resize
+#             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#             frame_resized = cv2.resize(frame_rgb, (224, 224))
+#             frame_resized = frame_resized / 255.0
+#             frame_resized = np.expand_dims(frame_resized, axis=0)
 
-            # Predict using the model
-            result = cnn.predict(frame_resized)
-            result = np.argmax(result, axis=1)[0]
+#             # Predict using the model
+#             result = cnn.predict(frame_resized)
+#             result = np.argmax(result, axis=1)[0]
 
-            # Get the highest probability
-            accuracy = np.max(result)
-            label = Categories[result]
+#             # Get the highest probability
+#             accuracy = np.max(result)
+#             label = Categories[result]
 
-            # Draw the category and accuracy on the frame
-            label_text = f'{label} - {accuracy*100:.2f}%'
-            cv2.putText(frame, label_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+#             # Draw the category and accuracy on the frame
+#             label_text = f'{label} - {accuracy*100:.2f}%'
+#             cv2.putText(frame, label_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
-            # Display the frame
-            video_placeholder.image(frame, caption='Processed Frame', width=640)
+#             # Display the frame
+#             video_placeholder.image(frame, caption='Processed Frame', width=640)
 
-            # Generate a unique key for the button using the counter
-            button_key = f'stop_button_{button_counter}'
-            button_counter += 1
+#             # Generate a unique key for the button using the counter
+#             button_key = f'stop_button_{button_counter}'
+#             button_counter += 1
 
-            # Break the loop if 'q' is pressed
-            if stop_placeholder.button('Stop', key=button_key):
-                break
+#             # Break the loop if 'q' is pressed
+#             if stop_placeholder.button('Stop', key=button_key):
+#                 break
             
-            # If fire or smoke detected and accuracy is greater than 90%, send an SMS alert
-            if send_warnings and accuracy > 0.9 and label in ['Fire', 'Smoke']:
-                st.warning(f"Alert! of {label} is sent to the authorities.")
+#             # If fire or smoke detected and accuracy is greater than 90%, send an SMS alert
+#             if send_warnings and accuracy > 0.9 and label in ['Fire', 'Smoke']:
+#                 st.warning(f"Alert! of {label} is sent to the authorities.")
 
-    # Release VideoCapture object
-    cap.release()
+#     # Release VideoCapture object
+#     cap.release()
