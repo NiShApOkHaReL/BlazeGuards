@@ -4,9 +4,13 @@ import schedule
 import time
 import threading
 from datetime import date
+<<<<<<< HEAD
 
 today = date.today()
+=======
+>>>>>>> 3041bb77db5f317ede14778c4488b91d35841f50
 
+today = date.today()
 # Define API URL for Nasa Active Fire Data
 nasa_url =f"https://firms.modaps.eosdis.nasa.gov/api/area/csv/9799bfce0729259d1fd5f60d816aa38c/MODIS_NRT/world/1/{today}"
 
