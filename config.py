@@ -5,7 +5,7 @@ def connect_to_database():
     conn = mysql.connector.connect(
         host = "localhost",
         database = "blazeguards",
-        id = "root",
+        user = "root",
         password = ""
     )
     cursor = conn.cursor()
