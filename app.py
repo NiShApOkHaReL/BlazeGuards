@@ -47,6 +47,28 @@ with st.sidebar:
             st.write(f"Fire Intensity: {fire_intensity}")
             st.write(f"Population Density: {population_density}")
             st.write(f"Sensitive Areas: {sensitive_areas}")
+
+            # Save data to MySQL
+            query = "INSERT INTO submissions (latitude,longitude,address, fire_intensity, population_density, sensitive_areas, status) VALUES (%s,%s,%s, %s, %s, %s, %s)"
+            cursor.execute(query, (lat, lon, "Adress to be defined",fire_intensity, population_density, sensitive_areas, "Active"))
+            conn.commit()
+
+            # Display success message
+            st.success("Submission successful!")
+
+            # Save image (if uploaded)
+            if fire_image is not None:
+                image_path = f"uploaded_images/{fire_image.name}"
+                with open(image_path, 'wb') as image_file:
+                    image_file.write(fire_image.read())
+                st.image(fire_image, caption="Uploaded Fire Image", use_column_width=True)
+                st.success("Image saved successfully!")
+
+            else:
+                st.warning("Please fill out all fields.")
+
+
+        
             
         
 
