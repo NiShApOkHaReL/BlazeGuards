@@ -1,5 +1,8 @@
 import streamlit as st
 from config import connect_to_database
+import pandas as pd
+import plotly.express as px
+from data_fetch import active_fire_data
 
 conn, cursor = connect_to_database()
 
@@ -9,7 +12,7 @@ conn, cursor = connect_to_database()
 
 
 st.title("BlazeGuards: Fire Management Solutions")
-st.map(use_container_width = True)
+st.map(active_fire_data[['latitude','longitude']],use_container_width = True)
 
 active_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'Active';"
 operation_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'In-Operation';"
@@ -67,3 +70,18 @@ if status == 'Controlled':
         })
     # Display the data in a table
     st.table(data)
+
+# Creating tabs
+tab1, tab2 = st.tabs(['Past Fires','High Alerts'])
+
+with tab1:
+    past_data = pd.read_csv("2022_Nepal.csv")
+    with st.container():
+        st.title("🗺 Map View")
+
+        fig = px.density_mapbox(past_data,
+                                lat = 'latitude',
+                                lon = 'longitude'
+                                )
+        fig.update_layout(title = 'Time Lapse of 2022')
+        st.plotly_chart(fig) #Show Visualization
