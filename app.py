@@ -1,13 +1,26 @@
 import streamlit as st
 from config import connect_to_database
 import pandas as pd
+import requests
 import plotly.express as px
-from data_fetch import active_fire_data
+from data_fetch import active_fire_data 
+
 
 from config import connect_to_database, get_current_location, manually_select_location, choose_on_map
 conn, cursor = connect_to_database()
 
-
+# Function to get location name from latitude and longitude
+def get_location_name(lat, lon):
+    url = f"https://api.opencagedata.com/geocode/v1/json?q={lat}+{lon}&key=a7b40639e1f84a389ea1a2ea8e0b69c5"
+    response = requests.get(url)
+    data = response.json()
+    
+    if 'results' in data and len(data['results']) > 0:
+        components = data['results'][0]['components']
+        country = components.get('country', '')
+        return f"{country}"
+    else:
+        return "Location information not available"
 
 st.set_page_config(layout="centered")
 with st.sidebar:
@@ -128,9 +141,72 @@ with tab1:
     with st.container():
         st.title("🗺 Map View")
 
-        fig = px.density_mapbox(past_data,
-                                lat = 'latitude',
-                                lon = 'longitude'
+        fig = px.density_mapbox(past_data, 
+                                lat ='latitude', 
+                                lon ='longitude', 
+                                z = 'brightness', 
+                                color_continuous_scale  = 'Viridis',
+                                range_color = [200,520],
+                                radius = 5,
+                                center = dict(lat=28.3949, lon=84.1240), 
+                                zoom = 5,
+                                mapbox_style = "carto-positron",
+                                animation_frame = "acq_date",
                                 )
         fig.update_layout(title = 'Time Lapse of 2022')
         st.plotly_chart(fig) #Show Visualization
+
+
+
+with tab2:
+    # Show "Fatal Zones" (locations with highest brightness) on the right side
+    top_fatal_zones = active_fire_data.nlargest(10, 'brightness')
+    top_fatal_zones['Location'] = top_fatal_zones.apply(lambda row: get_location_name(row['latitude'], row['longitude']), axis=1)
+    
+    # Remove index and display unique countries
+    top_fatal_zones = top_fatal_zones[['Location', 'brightness','confidence']].reset_index(drop=True)
+    # top_fatal_zones = top_fatal_zones.drop_duplicates(subset=['Location'])
+    
+    st.title('⚠ High Alert Regions')
+    st.table(top_fatal_zones[['Location', 'brightness','confidence']])
+
+#Expander to show Educational Content
+
+st.title('📖 Quick informations about fire and how to fight them.')
+# Create an accordion to organize content
+with st.expander("Types of Fires"):
+    st.write("""
+    Fires are classified into different types based on the materials that are burning. 
+    Here are the main types of fires:
+    
+    - **Class A Fires:** These involve ordinary combustibles like wood, paper, and cloth.
+    
+    - **Class B Fires:** These involve flammable liquids or gases like gasoline, oil, and propane.
+    
+    - **Class C Fires:** These involve electrical equipment and should not be extinguished with water.
+    
+    - **Class D Fires:** These involve combustible metals like magnesium, sodium, or potassium.
+    
+    - **Class K Fires:** These involve cooking oils or fats in commercial kitchens.
+    """)
+
+with st.expander("Ways to Fight Fires"):
+    st.write("""
+    The appropriate method to fight a fire depends on its type. Here are some common ways to combat fires:
+
+    - **Water:** Effective for Class A fires, but should not be used on electrical or grease fires.
+    
+    - **Fire Extinguishers:** Each type of fire has a specific extinguisher type (A, B, C, D, or K).
+    
+    - **Carbon Dioxide (CO2):** Suitable for Class B and C fires, as it doesn't leave residue.
+    
+    - **Dry Chemical Powder:** Versatile and can be used on Class A, B, and C fires.
+    
+    - **Wet Chemical:** Designed for Class K fires, often found in commercial kitchens.
+    
+    - **Fire Blankets:** Used to smother small fires, particularly in kitchens.
+    
+    - **Sand or Dirt:** Can be used in the absence of an extinguisher for Class A fires.
+    """)
+cursor.close()
+conn.close()
