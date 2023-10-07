@@ -4,6 +4,8 @@ import pandas as pd
 import requests
 import plotly.express as px
 from data_fetch import active_fire_data 
+import folium
+from streamlit.components.v1 import html
 
 
 from config import connect_to_database, get_current_location,  choose_on_map
@@ -74,7 +76,44 @@ with st.sidebar:
 
 
 st.title("BlazeGuards: Fire Management Solutions")
-st.map(active_fire_data[['latitude','longitude']],use_container_width = True)
+
+df = active_fire_data 
+# Define a function to assign colors based on brightness
+def assign_color(brightness):
+    if brightness > 365:
+        return 'red'
+    elif 250 <= brightness <= 365:
+        return 'blue'
+    else:
+        return 'green'
+
+map_width = 750  
+map_height = 600
+
+# Create a base map
+m = folium.Map(location=[0, 0], zoom_start=2)
+
+
+
+# Iterate through your dataset and add markers to the map
+for index, row in df.iterrows():
+    lat, lon, brightness = row['latitude'], row['longitude'], row['brightness']
+    color = assign_color(brightness)
+    folium.Circle(
+        location=[lat, lon],
+        radius=5,
+        color=color,
+        fill=True,
+        fill_color=color
+    ).add_to(m)
+
+
+# Render the map using components
+html_string = m.get_root().render()
+# html(html_string)
+st.components.v1.html(html_string, width=map_width, height=map_height)
+
+# st.map(active_fire_data[['latitude','longitude']],use_container_width = True)
 
 active_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'Active';"
 operation_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'In-Operation';"
