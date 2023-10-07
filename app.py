@@ -28,13 +28,13 @@ st.set_page_config(layout="centered")
 with st.sidebar:
     st.title("Report a Fire 🔥")
     st.header("Enter the location")
-    location_method = st.radio("Choose location method", ["Take current location", "Enter address manually", "Choose on map"])
+    location_method = st.radio("Choose location method", ["Take current location",  "Choose on map"])
     if location_method == "Take current location":
-        lat, lon = get_current_location()
-    if location_method == "Enter address manually":
-        lat,lon = manually_select_location()
+        lat, lon, address= get_current_location()
+    
     if location_method == "Choose on map":
         lat, lon = choose_on_map()
+        
     
     fire_intensity = st.selectbox("Fire Intensity ", ["High", "Medium", "Low"])
     population_density = st.selectbox("Population Density", ["High", "Medium", "Low"])
@@ -52,7 +52,7 @@ with st.sidebar:
 
             # Save data to MySQL
             query = "INSERT INTO submissions (latitude,longitude,address, fire_intensity, population_density, sensitive_areas, status) VALUES (%s,%s,%s, %s, %s, %s, %s)"
-            cursor.execute(query, (lat, lon, "Adress to be defined",fire_intensity, population_density, sensitive_areas, "Active"))
+            cursor.execute(query, (lat, lon, address,fire_intensity, population_density, sensitive_areas, "Active"))
             conn.commit()
 
             # Display success message
@@ -66,7 +66,7 @@ with st.sidebar:
                 st.image(fire_image, caption="Uploaded Fire Image", use_column_width=True)
                 st.success("Image saved successfully!")
 
-            else:
+        else:
                 st.warning("Please fill out all fields.")
 
 

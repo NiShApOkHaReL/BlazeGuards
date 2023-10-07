@@ -77,45 +77,14 @@ def choose_on_map():
     st.components.v1.html(iframe_html, width=800, height=600)
 
     # Display text input fields for latitude and longitude
-    lat = st.text_input("Latitude", value=str(lat), key="latitude")
+    lat = st.text_input("Latitudes", value=str(lat), key="latitude")
     lon = st.text_input("Longitude", value=str(lon), key="longitude")
+
+    
 
     return lat, lon
              
 
-# Function to handle "Manually" method
-
-def manually_select_location():
-    st.write("You chose 'Manually'")
-    location_name = st.text_input("Enter a location:")
-
-    latitude = None
-    longitude = None
-    
-    if st.button("Geocode"):
-        if location_name:
-            # Geocode the entered location
-            base_url = "https://nominatim.openstreetmap.org/search"
-            params = {
-                "q": location_name,
-                "format": "json",
-            }
-
-            response = requests.get(base_url, params=params)
-            data = response.json()
-
-            if data:
-                first_result = data[0]  # Take the first result (most relevant)
-                latitude = float(first_result["lat"])
-                longitude = float(first_result["lon"])
-                
-            else:
-                st.write("Unable to geocode the address.")
-        else:
-            st.write("Please enter a location.")
-
-    return latitude, longitude
- 
 
 # Function to handle "Current Location" method
 
@@ -124,8 +93,9 @@ def get_current_location():
         response = requests.get('https://ipinfo.io')
         data = response.json()
         if 'loc' in data:
-            latitude, longitude = data['loc'].split(',')            
-            return float(latitude), float(longitude)
+            latitude, longitude = data['loc'].split(',')   
+            address = data['city']         
+            return float(latitude), float(longitude), address
     except Exception as e:
         print(f"An error occurred: {e}")
 
@@ -152,7 +122,8 @@ def display_submissions():
             "Fire Intensity": submission[2],
             "Population Density": submission[3],
             "Sensitive Areas": submission[4],
-            "Status": submission[5]
+            "Status": submission[5],
+            "Map": st.markdown('[Click here to open a new page](map.py)'),
         })
 
     # Display the data in a table
