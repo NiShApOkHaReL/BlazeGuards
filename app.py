@@ -4,9 +4,11 @@ import pandas as pd
 import requests
 import plotly.express as px
 from data_fetch import active_fire_data 
+import folium
+from streamlit.components.v1 import html
 
 
-from config import connect_to_database, get_current_location, manually_select_location, choose_on_map
+from config import connect_to_database, get_current_location,  choose_on_map
 conn, cursor = connect_to_database()
 
 # Function to get location name from latitude and longitude
@@ -26,13 +28,13 @@ st.set_page_config(layout="centered")
 with st.sidebar:
     st.title("Report a Fire 🔥")
     st.header("Enter the location")
-    location_method = st.radio("Choose location method", ["Take current location", "Enter address manually", "Choose on map"])
+    location_method = st.radio("Choose location method", ["Take current location",  "Choose on map"])
     if location_method == "Take current location":
-        lat, lon = get_current_location()
-    if location_method == "Enter address manually":
-        lat,lon = manually_select_location()
+        lat, lon, address= get_current_location()
+    
     if location_method == "Choose on map":
         lat, lon = choose_on_map()
+        
     
     fire_intensity = st.selectbox("Fire Intensity ", ["High", "Medium", "Low"])
     population_density = st.selectbox("Population Density", ["High", "Medium", "Low"])
@@ -50,7 +52,7 @@ with st.sidebar:
 
             # Save data to MySQL
             query = "INSERT INTO submissions (latitude,longitude,address, fire_intensity, population_density, sensitive_areas, status) VALUES (%s,%s,%s, %s, %s, %s, %s)"
-            cursor.execute(query, (lat, lon, "Adress to be defined",fire_intensity, population_density, sensitive_areas, "Active"))
+            cursor.execute(query, (lat, lon, address,fire_intensity, population_density, sensitive_areas, "Active"))
             conn.commit()
 
             # Display success message
@@ -64,7 +66,7 @@ with st.sidebar:
                 st.image(fire_image, caption="Uploaded Fire Image", use_column_width=True)
                 st.success("Image saved successfully!")
 
-            else:
+        else:
                 st.warning("Please fill out all fields.")
 
 
@@ -74,7 +76,44 @@ with st.sidebar:
 
 
 st.title("BlazeGuards: Fire Management Solutions")
-st.map(active_fire_data[['latitude','longitude']],use_container_width = True)
+
+df = active_fire_data 
+# Define a function to assign colors based on brightness
+def assign_color(brightness):
+    if brightness > 365:
+        return 'red'
+    elif 250 <= brightness <= 365:
+        return 'blue'
+    else:
+        return 'green'
+
+map_width = 750  
+map_height = 600
+
+# Create a base map
+m = folium.Map(location=[0, 0], zoom_start=2)
+
+
+
+# Iterate through your dataset and add markers to the map
+for index, row in df.iterrows():
+    lat, lon, brightness = row['latitude'], row['longitude'], row['brightness']
+    color = assign_color(brightness)
+    folium.Circle(
+        location=[lat, lon],
+        radius=5,
+        color=color,
+        fill=True,
+        fill_color=color
+    ).add_to(m)
+
+
+# Render the map using components
+html_string = m.get_root().render()
+# html(html_string)
+st.components.v1.html(html_string, width=map_width, height=map_height)
+
+# st.map(active_fire_data[['latitude','longitude']],use_container_width = True)
 
 active_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'Active';"
 operation_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'In-Operation';"
