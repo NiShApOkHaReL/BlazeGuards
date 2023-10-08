@@ -205,6 +205,7 @@ def fire_detection():
 
     # Initialize VideoCapture object for live feed
     cap = cv2.VideoCapture(1)
+    cap.set(cv2.CAP_PROP_FPS, 4)
 
     # Streamlit loop
     button_counter = 0
@@ -225,7 +226,7 @@ def fire_detection():
             ret, frame = cap.read()
 
             # Convert the frame to RGB and resize
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             frame_resized = cv2.resize(frame_rgb, (224, 224))
             frame_resized = frame_resized / 255.0
             frame_resized = np.expand_dims(frame_resized, axis=0)
@@ -240,7 +241,7 @@ def fire_detection():
             label = Categories[result]
 
             # Draw the category and accuracy on the frame
-            label_text = f'{label} - {accuracy*100:.2f}%'
+            label_text = f'{label}'
             cv2.putText(frame, label_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
             # Display the frame

@@ -77,12 +77,12 @@ st.title("BlazeGuards: Fire Management Solutions")
 
 # Define a function to assign colors based on brightness
 def assign_color(brightness):
-    if brightness > 365:
+    if brightness > 325:
         return 'red'
-    elif 250 <= brightness <= 365:
-        return 'blue'
+    elif 250 <= brightness <= 325:
+        return 'orange'
     else:
-        return 'green'
+        return 'blue'
 
 map_width = 750  
 map_height = 600
@@ -90,13 +90,11 @@ map_height = 600
 # Create a base map
 m = folium.Map(location=[0, 0], zoom_start=2)
 
-
-
 # Iterate through your dataset and add markers to the map
 for index, row in active_fire_data.iterrows():
     lat, lon, brightness = row['latitude'], row['longitude'], row['brightness']
     color = assign_color(brightness)
-    folium.Circle(
+    folium.CircleMarker(
         location=[lat, lon],
         radius=5,
         color=color,
