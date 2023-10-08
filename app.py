@@ -50,7 +50,7 @@ schedule_thread.start()
 
 
 #***Connection to Database
-from config import connect_to_database, get_current_location,  choose_on_map
+from setups.config import connect_to_database, get_current_location,  choose_on_map
 conn, cursor = connect_to_database()
 
 # Function to get location name from latitude and longitude
@@ -211,7 +211,7 @@ if status == 'Controlled':
 tab1, tab2 = st.tabs(['Past Fires','High Alerts'])
 
 with tab1:
-    past_data = pd.read_csv("2022_Nepal.csv")
+    past_data = pd.read_csv("Dataset/2022_Nepal.csv")
     with st.container():
         st.title("🗺 Map View")
 
