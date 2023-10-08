@@ -1,3 +1,7 @@
+# Challenge:- Managing Fire: Increasing Community-based Fire Management Opportunities
+BlazeGuards is a high-tech tool(Web app) that helps manage and keep an eye on wildfires better.This web application integrates NASA's satellite-derived active fire data, employs computer vision-based fire detection, encourages community involvement, and provides tools for historical data analysis, all aimed at improving early detection, rapid response, and overall fire management.
+
+
 ## Getting Started
 
 To run BlazeGuards on your local device, follow these steps:
@@ -22,4 +26,15 @@ To run BlazeGuards on your local device, follow these steps:
 
    ```
    streamlit run admin.py
+Use the appropriate credentials for the admin login, which can be found in the database in the admin table.
+
+Team Members:-
+BlazeGuards was developed by a team of five dedicated members:
+- Abhinash Bhagat
+- Anisha Paudel
+- Garima Paudel
+- Nisha Pokharel
+- Sagar Poudel
+
+
 
