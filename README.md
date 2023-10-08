@@ -29,7 +29,7 @@ To run BlazeGuards on your local device, follow these steps:
 Use the appropriate credentials for the admin login, which can be found in the database in the admin table.
 
 <hr>
-**Team Members:-**
+Team Members:-
 BlazeGuards was developed by a team of five dedicated members:
 - Abhinash Bhagat
 - Anisha Paudel
