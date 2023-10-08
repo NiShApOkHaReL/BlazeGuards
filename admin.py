@@ -1,8 +1,8 @@
 import streamlit as st
-from config import validate_login, display_submissions,\
+from setups.config import validate_login, display_submissions,\
     connect_to_database, set_status, fire_detection,\
     set_region
-from data_fetch import active_fire_data
+from app import active_fire_data
 
  
 headerSection = st.container()
