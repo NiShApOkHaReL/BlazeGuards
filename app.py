@@ -1,5 +1,5 @@
 import streamlit as st
-from setups.config import connect_to_database
+from setups.config import connect_to_database, choose_on_map, get_current_location
 import pandas as pd
 import requests
 import plotly.express as px
@@ -150,9 +150,9 @@ st.components.v1.html(html_string, width=map_width, height=map_height)
 
 # st.map(active_fire_data[['latitude','longitude']],use_container_width = True)
 
-active_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'Active';"
-operation_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'In-Operation';"
-control_query = "SELECT address, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'Controlled';"
+active_query = "SELECT latitude,longitude, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'Active';"
+operation_query = "SELECT latitude, longitude, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'In-Operation';"
+control_query = "SELECT latitude, longitude, fire_intensity, population_density, sensitive_areas, status FROM blazeguards.submissions where status = 'Controlled';"
 
 col1, col2 = st.columns(2)
 with col1:
@@ -165,12 +165,13 @@ if status == 'Active':
     # Create a list of dictionaries for the data
     data = []
     for submission in submissions:
-        data.append({
-            "Address": submission[0],
-            "Fire Intensity": submission[1],
-            "Population Density": submission[2],
-            "Sensitive Areas": submission[3],
-            "Status": submission[4]
+       data.append({
+            "Latitude": submission[0],
+            "Longitude": submission[1],
+            "Fire Intensity": submission[2],
+            "Population Density": submission[3],
+            "Sensitive Areas": submission[4],
+            "Status": submission[5]
         })
     # Display the data in a table
     st.table(data)
@@ -182,11 +183,12 @@ if status == 'In-Operation':
     data = []
     for submission in submissions:
         data.append({
-            "Address": submission[0],
-            "Fire Intensity": submission[1],
-            "Population Density": submission[2],
-            "Sensitive Areas": submission[3],
-            "Status": submission[4]
+            "Latitude": submission[0],
+            "Longitude": submission[1],
+            "Fire Intensity": submission[2],
+            "Population Density": submission[3],
+            "Sensitive Areas": submission[4],
+            "Status": submission[5]
         })
     # Display the data in a table
     st.table(data)
@@ -198,11 +200,12 @@ if status == 'Controlled':
     data = []
     for submission in submissions:
         data.append({
-            "Address": submission[0],
-            "Fire Intensity": submission[1],
-            "Population Density": submission[2],
-            "Sensitive Areas": submission[3],
-            "Status": submission[4]
+            "Latitude": submission[0],
+            "Longitude": submission[1],
+            "Fire Intensity": submission[2],
+            "Population Density": submission[3],
+            "Sensitive Areas": submission[4],
+            "Status": submission[5]
         })
     # Display the data in a table
     st.table(data)
