@@ -28,7 +28,8 @@ To run BlazeGuards on your local device, follow these steps:
    streamlit run admin.py
 Use the appropriate credentials for the admin login, which can be found in the database in the admin table.
 
-Team Members:-
+<hr>
+**Team Members:-**
 BlazeGuards was developed by a team of five dedicated members:
 - Abhinash Bhagat
 - Anisha Paudel
