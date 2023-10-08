@@ -6,7 +6,7 @@ To run BlazeGuards on your local device, follow these steps:
 
    ```
    git clone <repository_url>
-```
+
 
 2. Create a MySQL database named "blazeguards" using XAMPP or a similar tool, and import the provided database.
 
